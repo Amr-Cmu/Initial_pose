@@ -12,7 +12,7 @@ class AMRNav(Node):
         super().__init__('amr_nav')
         self.navigator = BasicNavigator()
 
-        base_path = '/home/thanawat/amr_ws/src/follow_person/csv'
+        base_path = 'path to file initial_pose.csv'
         self.csv_filename_B = os.path.join(base_path, home)
         
         self.get_logger().info('Waiting Navigation2')
@@ -24,7 +24,7 @@ class AMRNav(Node):
     
     def load_home_position(self):
         if not os.path.exists(self.csv_filename_B):
-            self.get_logger().error(f'ไม่พบไฟล์ {self.csv_filename_B}!')
+            self.get_logger().error(f'File not found {self.csv_filename_B}!')
             return None
         
         with open(self.csv_filename_B, 'r') as csvfile_B:
@@ -35,12 +35,12 @@ class AMRNav(Node):
                     x, y, ox, oy, oz, ow = map(float, row[1:7])
                     return (x, y, ox, oy, oz, ow)
                 except ValueError:
-                    self.get_logger().error(f'ข้อมูลใน CSV ไฟล์ไม่ถูกต้อง: {row}')
+                    self.get_logger().error(f'The data in the CSV file is incorrect: {row}')
         return None
     
     def initial_pose(self):
         if self.estimate_home is None:
-            self.get_logger().error('ไม่พบข้อมูลตำแหน่งเริ่มต้น!')
+            self.get_logger().error('No default location information found!')
             return
 
         pose_msg = PoseStamped()
@@ -55,7 +55,7 @@ class AMRNav(Node):
         pose_msg.pose.orientation.w = self.estimate_home[5]
         
         self.navigator.setInitialPose(pose_msg)
-        self.get_logger().info('ตั้งค่าตำแหน่งเริ่มต้นจาก AMCL แล้ว')
+        self.get_logger().info('Initial Pose Succeed!!!')
         time.sleep(3)
 
 def main():
